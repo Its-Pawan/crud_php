@@ -1,27 +1,52 @@
 <?php
 session_start();
-include("header.php");
-require_once("config.php");
-if(isset($_POST['submit'])){
-  echo'<pre>'; 
+include ("header.php");
+require_once ("config.php");
+if (isset($_POST['submit'])) {
+  echo '<pre>';
   $path = 'uploads/';
-  $file_name = $_POST['fname'].'_'.date('YmdHms');
-  $profile = (file_exists($_FILES['profile']['temp_name'])) ? $file_name : 'null';
-  
+  $extention = pathinfo($_FILES['profile']['name'], PATHINFO_EXTENSION);
+  $file_name = $_POST['firstName'] . '_' . date('YmdHms') . '.' . $extention;
+  $profile = (file_exists($_FILES['profile']['tmp_name'])) ? $file_name : 'null';
+
   $insert_data = [
-     'fname'=> $_POST['firstName'],
-     'lname'=> $_POST['lastName'],
-     'email'=> $_POST['email'],
-     'password'=> $_POST['password'],
-     'contact'=> $_POST['contact'],
-     'profile'=> $_POST['profile'],
-     'gender'=> $_POST['gender'],
-     'address'=> $_POST['address'],
-     'state'=> $_POST['state'],
-     'hobby'=>implode(',', $_POST['hobby']),
+    'fname' => $_POST['firstName'],
+    'lname' => $_POST['lastName'],
+    'email' => $_POST['email'],
+    'password' => $_POST['password'],
+    'contact' => $_POST['contact'],
+    'profile' => $profile,
+    'gender' => $_POST['gender'],
+    'address' => $_POST['address'],
+    'state' => $_POST['state'],
+    'hobbies' => implode(',', $_POST['hobby']),
   ];
-print_r($insert_data);
-exit();
+  // print_r($insert_data); # to check about inserted info
+  $cols = implode(',', array_keys($insert_data));
+  $vals = implode("','", array_values($insert_data));
+  $sql = "INSERT INTO users ($cols) VALUES ('$vals')";
+  // echo $sql;
+  $insert = $conn->query($sql);
+  if ($insert) {
+    if (!is_null($profile)) {
+      move_uploaded_file($_FILES['profile']['tmp_name'], $path . $file_name);
+    }
+
+    echo '<div class="alert alert-primary" role="alert">
+    Data Inserted succesfully!
+  </div>';
+
+    header('Refresh: 3; URL=login.php');
+  } else {
+    echo '<div class="alert alert-primary" role="alert">
+  Something went wrong!
+  </div>';
+
+    header('Refresh: 3; URL=registration.php');
+
+  }
+
+
 }
 ?>
   <div class="container">
@@ -106,5 +131,5 @@ exit();
   </div>
 
 <?php
-include("footer.php");
+include ("footer.php");
 ?>
