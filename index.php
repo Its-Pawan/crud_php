@@ -21,8 +21,7 @@ if (isset($_POST['logout'])) {
   header('Refresh: 1; URL=login.php');
   exit;
 }
-?>
-?>
+?> 
 <div class="container-fluid">
 
   <?php
@@ -67,8 +66,8 @@ if (isset($_POST['logout'])) {
           <td><img src="<?php echo 'uploads/' . $user->profile; ?>" alt="Profile Picture" width="50">
           </td>
           <td>
-            <button type="button" class="btn btn-primary">Edit</button>
-            <button type="button" class="btn btn-danger">Delete</button>
+            <a class="btn btn-primary" href="update.php?user=<?php echo $user->id; ?>&email=<?php echo $user->email; ?>">Edit</a>
+            <a class="btn btn-primary" href="index.php?user=<?php echo $user->id; ?>">Delete</a>  
           </td>
         </tr>
         <?php
